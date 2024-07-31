@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N&S Management OAuth Callback</title>
+</head>
+<body>
+    <h1>N&S Management OAuth Callback</h1>
+    <p>Processing authentication...</p>
+    <script>
+        // JavaScript to handle OAuth response
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('oauth_token');
+        const verifier = params.get('oauth_verifier');
+
+        if (token && verifier) {
+            // Redirect to a server-side handler to complete the authentication process
+            // This URL should point to your server that processes OAuth tokens
+            const serverEndpoint = 'https://yourbackendserver.com/oauth/callback';
+            fetch(serverEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    oauth_token: token,
+                    oauth_verifier: verifier,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.body.innerHTML += "<p>Authentication successful. You can close this tab now.</p>";
+                } else {
+                    document.body.innerHTML += "<p>Authentication failed. Please try again.</p>";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.body.innerHTML += "<p>An error occurred. Please try again later.</p>";
+            });
+        } else {
+            document.body.innerHTML += "<p>Authentication failed. Please try again.</p>";
+        }
+    </script>
+</body>
+</html>
